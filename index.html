@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JobTap.OS | AI Job Routing & Contractor Matching</title>
+  <style>
+    :root {
+      --ink: #101010;
+      --panel: #ffffff;
+      --paper: #f6f4ee;
+      --line: #d8d2c5;
+      --muted: #6d675d;
+      --gold: #b9934c;
+      --gold-soft: #eadfc7;
+      --silver: #c9c9c5;
+      --green: #2f7d4f;
+      --yellow: #a8751d;
+      --red: #9d3930;
+      --shadow: 0 20px 50px rgba(20, 18, 14, .12);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(16,16,16,.035) 1px, transparent 1px),
+        linear-gradient(rgba(16,16,16,.035) 1px, transparent 1px),
+        var(--paper);
+      background-size: 42px 42px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .wrap { width: min(1160px, calc(100% - 32px)); margin: 0 auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+      background: rgba(246, 244, 238, .82);
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+    }
+
+    .mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      background: #111;
+      font-weight: 900;
+    }
+
+    .links { display: flex; gap: 22px; color: var(--muted); font-size: 14px; }
+    .btn {
+      border: 1px solid #151515;
+      background: #151515;
+      color: #fff;
+      padding: 12px 16px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .hero {
+      padding: 72px 0 48px;
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      width: fit-content;
+      border: 1px solid var(--gold);
+      background: var(--gold-soft);
+      color: #5c4315;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 18px 0 16px;
+      font-size: clamp(42px, 7vw, 74px);
+      line-height: .96;
+      max-width: 720px;
+    }
+
+    .lead {
+      font-size: 19px;
+      line-height: 1.55;
+      color: #3f3a33;
+      max-width: 610px;
+    }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+
+    .proof {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-top: 34px;
+    }
+
+    .proof div { padding: 18px 18px 18px 0; }
+    .proof strong { display: block; font-size: 24px; }
+    .proof span { color: var(--muted); font-size: 13px; }
+
+    .dashboard {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .dash-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: #151515;
+      color: #fff;
+    }
+
+    .dash-top small { color: var(--silver); }
+    .status-dot { width: 9px; height: 9px; background: var(--gold); display: inline-block; margin-right: 8px; }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .metric { padding: 18px; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric b { display: block; font-size: 25px; }
+    .metric span { font-size: 12px; color: var(--muted); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    .score { font-weight: 850; color: var(--gold); }
+    .pill { padding: 6px 9px; border: 1px solid var(--line); background: #faf9f6; font-size: 12px; font-weight: 750; }
+    .pill.hot { border-color: #e4b658; background: #fff4d8; color: var(--yellow); }
+    .pill.ok { border-color: #acd3b9; background: #ecf7ef; color: var(--green); }
+
+    section { padding: 64px 0; }
+    .section-head { max-width: 780px; margin-bottom: 26px; }
+    h2 { font-size: clamp(30px, 4vw, 48px); line-height: 1.05; margin: 0 0 12px; }
+    .section-head p { color: var(--muted); font-size: 17px; line-height: 1.55; margin: 0; }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 24px;
+      min-height: 210px;
+    }
+
+    .feature .num { color: var(--gold); font-weight: 900; margin-bottom: 18px; }
+    .feature h3 { margin: 0 0 10px; font-size: 20px; }
+    .feature p { margin: 0; color: var(--muted); line-height: 1.5; }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .step {
+      background: #151515;
+      color: #fff;
+      padding: 18px;
+      min-height: 130px;
+      border-top: 4px solid var(--gold);
+    }
+
+    .step span { color: var(--silver); font-size: 12px; }
+    .step b { display: block; margin-top: 10px; font-size: 17px; }
+
+    .sim {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 24px;
+    }
+
+    label { display: block; font-weight: 750; margin: 14px 0 8px; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 12px;
+      font: inherit;
+    }
+
+    textarea { min-height: 96px; resize: vertical; }
+    .result { display: grid; gap: 14px; }
+    .result-row { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+    .result-row strong { font-size: 20px; }
+
+    .cta {
+      background: #151515;
+      color: #fff;
+      padding: 52px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      border-top: 5px solid var(--gold);
+    }
+
+    .cta p { color: var(--silver); margin: 10px 0 0; max-width: 680px; line-height: 1.5; }
+    footer { padding: 28px 0; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+
+    @media (max-width: 900px) {
+      .hero, .sim, .cta { grid-template-columns: 1fr; }
+      .grid-3, .flow, .metrics, .proof { grid-template-columns: 1fr; }
+      .links { display: none; }
+      .metric { border-right: 0; border-bottom: 1px solid var(--line); }
+      .cta { padding: 30px; }
+      table { font-size: 12px; }
+      th, td { padding: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="wrap">
+      <a class="brand" href="#">
+        <span class="mark">JT</span>
+        <span>JobTap.OS</span>
+      </a>
+      <div class="links">
+        <a href="#system">System</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#demo">Demo</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <a class="btn" href="#contact">Request Demo</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow">AI job routing for local service operations</div>
+        <h1>JobTap.OS</h1>
+        <p class="lead">
+          JobTap.OS scores incoming service requests, evaluates urgency and estimated value,
+          matches jobs to qualified contractors, and routes work through one monitored
+          operating layer.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="#demo">View Routing Demo</a>
+          <a class="btn secondary" href="#system">See System</a>
+        </div>
+        <div class="proof">
+          <div><strong>Intake</strong><span>Structured job requests</span></div>
+          <div><strong>Score</strong><span>AI-assisted priority ranking</span></div>
+          <div><strong>Route</strong><span>Contractor match pipeline</span></div>
+        </div>
+      </div>
+
+      <div class="dashboard" aria-label="JobTap dashboard preview">
+        <div class="dash-top">
+          <div><span class="status-dot"></span><b>Jobs Monitoring Dashboard</b></div>
+          <small>Live routing view</small>
+        </div>
+        <div class="metrics">
+          <div class="metric"><b>24</b><span>Total jobs in pipeline</span></div>
+          <div class="metric"><b>$86K</b><span>Estimated job value</span></div>
+          <div class="metric"><b>7</b><span>High urgency jobs</span></div>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Job</th><th>Urgency</th><th>AI Score</th><th>Route</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Roof leak repair</td><td><span class="pill hot">Emergency</span></td><td class="score">94</td><td>Licensed Roofer</td></tr>
+            <tr><td>Panel issue</td><td><span class="pill hot">High</span></td><td class="score">88</td><td>Electrician</td></tr>
+            <tr><td>Gutter install</td><td><span class="pill ok">Medium</span></td><td class="score">72</td><td>Exterior Crew</td></tr>
+            <tr><td>Drywall patch</td><td><span class="pill">Low</span></td><td class="score">41</td><td>General Repair</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <section id="system">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Built to turn messy service requests into routed work.</h2>
+          <p>
+            JobTap.OS replaces scattered calls, texts, spreadsheets, and guesswork with a
+            structured job pipeline that ranks the work and sends the right opportunities
+            to the right contractor.
+          </p>
+        </div>
+        <div class="grid-3">
+          <div class="feature">
+            <div class="num">01</div>
+            <h3>Job Intake</h3>
+            <p>Capture job type, location, urgency, description, requested date, and estimated value in a clean operating format.</p>
+          </div>
+          <div class="feature">
+            <div class="num">02</div>
+            <h3>AI Priority Score</h3>
+            <p>Rank incoming work by urgency, potential value, service type, and execution risk so high-priority jobs surface first.</p>
+          </div>
+          <div class="feature">
+            <div class="num">03</div>
+            <h3>Contractor Matching</h3>
+            <p>Match work to contractors based on specialty, availability, service area, qualification status, and performance score.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="workflow">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>From request to route in five steps.</h2>
+          <p>The operating model is simple enough for field teams and structured enough for AI-assisted dispatch.</p>
+        </div>
+        <div class="flow">
+          <div class="step"><span>Step 1</span><b>New job enters intake</b></div>
+          <div class="step"><span>Step 2</span><b>Urgency and value are scored</b></div>
+          <div class="step"><span>Step 3</span><b>Qualified contractors are matched</b></div>
+          <div class="step"><span>Step 4</span><b>Priority route is assigned</b></div>
+          <div class="step"><span>Step 5</span><b>Status is tracked to completion</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Try the routing logic.</h2>
+          <p>Change the request profile and watch JobTap.OS generate a priority score and routing recommendation.</p>
+        </div>
+        <div class="sim">
+          <div class="panel">
+            <label for="service">Service Type</label>
+            <select id="service">
+              <option value="roofing">Roofing</option>
+              <option value="electrical">Electrical</option>
+              <option value="hvac">HVAC</option>
+              <option value="plumbing">Plumbing</option>
+              <option value="general">General Repair</option>
+            </select>
+
+            <label for="urgency">Urgency</label>
+            <select id="urgency">
+              <option value="emergency">Emergency</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+
+            <label for="value">Estimated Value</label>
+            <input id="value" type="number" value="4200" min="100" step="100" />
+
+            <label for="notes">Job Notes</label>
+            <textarea id="notes">Active leak near rear transition. Needs fast inspection and qualified exterior crew.</textarea>
+
+            <div style="margin-top:18px">
+              <button class="btn" id="scoreBtn">Score Job</button>
+            </div>
+          </div>
+
+          <div class="panel result">
+            <div class="result-row">
+              <span>Priority Score</span>
+              <strong id="score">94</strong>
+            </div>
+            <div class="result-row">
+              <span>Routing Decision</span>
+              <strong id="decision">Immediate Dispatch</strong>
+            </div>
+            <div class="result-row">
+              <span>Recommended Contractor Type</span>
+              <strong id="contractor">Licensed Roofer</strong>
+            </div>
+            <div class="result-row">
+              <span>Reason</span>
+              <strong id="reason">Emergency roofing request with high value and active damage risk.</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="wrap">
+        <div class="cta">
+          <div>
+            <h2>Route better jobs. Move faster. Lose less value in the handoff.</h2>
+            <p>
+              JobTap.OS is built for service operators, property managers, local contractor networks,
+              and dispatch teams that need cleaner intake, faster routing, and visible job control.
+            </p>
+          </div>
+          <a class="btn" href="mailto:drewburt4@gmail.com?subject=JobTap.OS%20Demo%20Request">Request Demo</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">JobTap.OS | AI-assisted job scoring, contractor matching, and service pipeline control.</div>
+  </footer>
+
+  <script>
+    const service = document.getElementById("service");
+    const urgency = document.getElementById("urgency");
+    const value = document.getElementById("value");
+    const score = document.getElementById("score");
+    const decision = document.getElementById("decision");
+    const contractor = document.getElementById("contractor");
+    const reason = document.getElementById("reason");
+    const btn = document.getElementById("scoreBtn");
+
+    const contractorMap = {
+      roofing: "Licensed Roofer",
+      electrical: "Licensed Electrician",
+      hvac: "HVAC Technician",
+      plumbing: "Licensed Plumber",
+      general: "General Repair Contractor"
+    };
+
+    function scoreJob() {
+      const urgencyPoints = { emergency: 45, high: 34, medium: 22, low: 10 };
+      const valuePoints = Math.min(35, Math.floor(Number(value.value || 0) / 160));
+      const servicePoints = service.value === "general" ? 8 : 16;
+      const total = Math.min(99, urgencyPoints[urgency.value] + valuePoints + servicePoints);
+
+      score.textContent = total;
+      contractor.textContent = contractorMap[service.value];
+
+      if (total >= 85) {
+        decision.textContent = "Immediate Dispatch";
+        reason.textContent = "High urgency, strong value, and clear contractor fit.";
+      } else if (total >= 65) {
+        decision.textContent = "Priority Review";
+        reason.textContent = "Good opportunity with enough value to route after confirmation.";
+      } else {
+        decision.textContent = "Standard Queue";
+        reason.textContent = "Lower urgency or lower estimated value. Route when capacity opens.";
+      }
+    }
+
+    btn.addEventListener("click", scoreJob);
+    service.addEventListener("change", scoreJob);
+    urgency.addEventListener("change", scoreJob);
+    value.addEventListener("input", scoreJob);
+  </script>
+</body>
+</html>
