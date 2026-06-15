@@ -466,16 +466,17 @@
       plumbing: "Licensed Plumber",
       general: "General Repair Contractor"
     };
+    const urgencyPoints = { emergency: 45, high: 34, medium: 22, low: 10 };
+    const maxValuePoints = 35;
+    const dollarsPerPoint = 160;
+    const generalServicePoints = 8;
+    const specializedServicePoints = 16;
+    const maxScore = 99;
 
     function scoreJob() {
-      const urgencyPoints = { emergency: 45, high: 34, medium: 22, low: 10 };
-      const maxValuePoints = 35;
-      const dollarsPerPoint = 160;
-      const generalServicePoints = 8;
-      const specializedServicePoints = 16;
       const valuePoints = Math.min(maxValuePoints, Math.floor(Number(value.value || 0) / dollarsPerPoint));
       const servicePoints = service.value === "general" ? generalServicePoints : specializedServicePoints;
-      const total = Math.min(99, urgencyPoints[urgency.value] + valuePoints + servicePoints);
+      const total = Math.min(maxScore, urgencyPoints[urgency.value] + valuePoints + servicePoints);
 
       score.textContent = total;
       contractor.textContent = contractorMap[service.value];
