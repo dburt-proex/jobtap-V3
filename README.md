@@ -1,57 +1,96 @@
 # JobTap.OS
 
-AI-assisted job scoring, contractor matching, and service pipeline control.
+AI-assisted job scoring, contractor matching, and service pipeline control for local contractor networks.
 
-JobTap.OS is a lightweight operations layer for local service workflows. It takes an incoming job request, scores urgency and value, identifies the right contractor lane, ranks eligible contractors, and produces a clear dispatch recommendation.
+JobTap.OS is a static showcase plus working routing demo. It takes an incoming job request, scores urgency and value, identifies the right contractor lane, ranks eligible contractors, and produces an Airtable-ready handoff package.
 
-The current repo contains a complete static showcase site plus deterministic routing logic that mirrors the Airtable backend model.
+## Current Status
 
-## What It Does
+This repo now contains:
 
-JobTap.OS turns scattered service requests into routed work:
+- premium marketplace-style landing page
+- working intake/routing flow
+- contractor match ranking logic
+- Airtable-ready payload generation
+- GitHub Pages deployment workflow
+- documented Airtable operating model
+- future backend path that keeps Airtable credentials out of the browser
 
-1. Intake a homeowner or service request.
-2. Normalize service type, urgency, estimated value, zip code, and notes.
-3. Score the job using deterministic routing rules.
-4. Assign a routing lane: `Immediate Dispatch`, `Priority Review`, or `Standard Queue`.
-5. Rank contractors by specialty, coverage, availability, qualification, and performance.
-6. Generate Airtable-ready payloads for `Jobs` and `Matches`.
+## Live Site
 
-## Why It Exists
+Expected GitHub Pages URL:
 
-Local service operations often lose value during the handoff: texts, calls, spreadsheets, unclear urgency, slow response, and weak contractor matching.
+```text
+https://dburt-proex.github.io/jobtap-V3/
+```
 
-JobTap.OS solves the first operational bottleneck: deciding which jobs matter most and who should get them first.
+A GitHub Actions Pages workflow is included at:
+
+```text
+.github/workflows/pages.yml
+```
+
+For GitHub Pages, the repo should use one of these settings:
+
+```text
+Settings -> Pages -> Build and deployment -> Source: GitHub Actions
+```
+
+or, for branch deploys:
+
+```text
+Settings -> Pages -> Deploy from a branch -> main / root
+```
+
+If the live URL returns `403`, the usual issue is that GitHub Pages is not enabled for the repository or the source is not set. The static files and deployment workflow are now present in the repo.
 
 ## Repo Tree
 
 ```text
 jobtap-V3/
-├── index.html
-├── styles.css
-├── src/
-│   ├── app.js
-│   └── routing.js
+├── .github/
+│   └── workflows/
+│       └── pages.yml
 ├── data/
 │   └── jobtap.routing.config.json
 ├── docs/
 │   └── airtable-schema.md
+├── src/
+│   ├── app.js
+│   └── routing.js
+├── .nojekyll
+├── 404.html
+├── index.html
+├── styles.css
 └── README.md
 ```
 
-## Website
+## What It Does
 
-`index.html` is the public-facing JobTap.OS showcase page. It includes:
+JobTap.OS turns scattered service requests into routed work:
 
-- product positioning
-- dashboard preview
-- system feature sections
-- workflow overview
-- interactive routing demo
-- Airtable backend model summary
-- demo request CTA
+1. Captures homeowner/contact context.
+2. Normalizes service type, urgency, estimated value, zip code, and notes.
+3. Scores the job using deterministic routing rules.
+4. Assigns a routing lane: `Immediate Dispatch`, `Priority Review`, or `Standard Queue`.
+5. Ranks contractors by specialty, coverage, availability, qualification, and performance.
+6. Generates Airtable-ready payloads for `Website Intake Queue`, `Jobs`, and `Matches`.
 
-The site is intentionally dependency-free. It can run as a static page on GitHub Pages or any basic static host.
+## Website UX
+
+The homepage is intentionally structured like a premium marketplace rather than a generic SaaS page:
+
+- sticky navigation
+- centered category tabs
+- rounded routing/search capsule
+- horizontal priority job cards
+- horizontal contractor lane cards
+- operational proof strip
+- live intake/routing form
+- result panel with score, lane, contractor matches, and next actions
+- backend model section
+
+The public CTA is no longer a `mailto:` link. The conversion path is now the on-page intake flow.
 
 ## Routing Engine
 
@@ -63,6 +102,8 @@ Main exports:
 - `scoreJob(input, config)`
 - `rankContractors(input, config)`
 - `buildAirtablePayload(input, config)`
+- `buildWebsiteIntakeRecord(input, config)`
+- `getNextActions(input, config)`
 - `DEFAULT_CONFIG`
 
 ### Score Formula
@@ -113,25 +154,36 @@ Priority Review:    score >= 65
 Standard Queue:     score < 65
 ```
 
-## Contractor Matching
+## Intake Flow
 
-Contractor ranking considers:
+The browser flow does three things:
 
-- service specialty fit
-- zip code coverage
-- availability
-- qualification status
-- minimum job value
-- contractor performance score
+1. Scores and routes the job instantly.
+2. Ranks the top contractor matches.
+3. Builds an Airtable-ready handoff package.
 
-The browser demo uses sample contractor profiles inside `DEFAULT_CONFIG`. In production, those contractor profiles should come from the Airtable `Contractors` table or a server-side API.
+The current static site stores submitted demo packages in `localStorage` under:
+
+```text
+jobtap.intakeQueue
+```
+
+It also exposes the latest payload for debugging/demo use:
+
+```js
+window.JobTapLastPayload
+window.JobTapLastSubmission
+```
+
+This is intentional for a static GitHub Pages deployment. It proves the workflow without exposing private Airtable credentials.
 
 ## Airtable Backend
 
 A working Airtable base named `JobTap` backs the operating model.
 
-Existing core tables:
+Core tables:
 
+- `Website Intake Queue`
 - `Homeowners`
 - `Jobs`
 - `Contractors`
@@ -139,45 +191,11 @@ Existing core tables:
 - `Tasks`
 - `Payments`
 - `Reviews`
-
-Added table:
-
 - `Routing Rules`
 
-The `Routing Rules` table stores deterministic scoring and routing logic that mirrors the website engine. Seeded rules include urgency boosts, value thresholds, specialized service fit, and routing lane thresholds.
+`Website Intake Queue` is the staging table for public/demo submissions. A production server endpoint should validate the request, write a queue record, then promote qualified work into `Jobs`, `Matches`, and `Tasks`.
 
 Detailed schema documentation is in `docs/airtable-schema.md`.
-
-## Airtable Mapping
-
-`buildAirtablePayload()` returns a safe object shaped for backend insertion.
-
-Example output shape:
-
-```js
-{
-  Jobs: {
-    "Job Name": "Roofing request",
-    "Service Type": "Roofing",
-    Urgency: "Emergency",
-    "Estimated Value": 4200,
-    "Zip Code": "55904",
-    "Job Score (AI)": 87,
-    "Routing Status": "Immediate Dispatch",
-    "Qualified Lead": true
-  },
-  Matches: [
-    {
-      Contractor: "Northline Roofing Crew",
-      "Priority Score": 87,
-      "Match Score": 90,
-      Rank: 1,
-      "Dispatch Order": 1,
-      "Match Status": "Assigned"
-    }
-  ]
-}
-```
 
 ## Security Rule
 
@@ -196,7 +214,18 @@ Recommended production architecture:
 Public website -> secure API endpoint -> routing engine -> Airtable
 ```
 
-The server endpoint should validate the request, call the routing logic, then write records to Airtable using server-side credentials.
+## Future Backend Path
+
+Airtable is the correct early operations backend because it gives fast visibility and easy admin control. It is not the long-term production database.
+
+Recommended path:
+
+1. Keep Airtable as the operator cockpit now.
+2. Add a secure API endpoint for website submissions.
+3. Write validated submissions into `Website Intake Queue`.
+4. Promote qualified records into `Jobs`, `Matches`, and `Tasks`.
+5. When product usage grows, move the system of record to Postgres or another production database.
+6. Keep Airtable as an admin/reporting surface if useful.
 
 ## Local Use
 
@@ -225,13 +254,13 @@ JobTap.OS is strongest as a service-ops proof project and a sellable workflow au
 - emergency repair dispatch
 - lead generation operators
 
-The first monetizable offer is not the full software platform. The faster wedge is:
+The first monetizable offer is:
 
 ```text
 AI Job Routing Audit + Airtable Dispatch Prototype
 ```
 
-Recommended starting offer:
+Recommended starting deliverable:
 
 - intake audit
 - routing score design
@@ -242,23 +271,10 @@ Recommended starting offer:
 
 ## Next Build Steps
 
-1. Add a secure backend endpoint for Airtable writes.
-2. Replace sample contractors with live Airtable contractor records.
-3. Add real intake form submission.
+1. Enable/confirm GitHub Pages source if the public URL still returns `403`.
+2. Add a secure backend endpoint for Airtable writes.
+3. Replace sample contractors with live Airtable contractor records.
 4. Generate `Jobs`, `Matches`, and `Tasks` from one submitted request.
 5. Add admin override and manual dispatch review.
 6. Track conversion outcome and revenue generated.
 7. Use closed-job feedback to improve contractor ranking.
-
-## Positioning
-
-JobTap.OS is not just a landing page. It is an applied AI operations system showing:
-
-- workflow design
-- deterministic scoring
-- lead qualification
-- contractor matching
-- Airtable backend architecture
-- revenue-aware routing logic
-
-That makes it a strong AI showcase project because it connects AI workflow logic to operational speed, revenue capture, and field execution.
