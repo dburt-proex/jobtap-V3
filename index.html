@@ -471,10 +471,10 @@
     const dollarsPerPoint = 160;
     const generalServicePoints = 8;
     const specializedServicePoints = 16;
-    const maxScore = 99;
+    const maxScore = 96;
 
     function scoreJob() {
-      const valuePoints = Math.min(maxValuePoints, Math.floor(Number(value.value || 0) / dollarsPerPoint));
+      const valuePoints = Math.min(maxValuePoints, Math.floor(Number(value.value || 0) / dollarsPerPoint)); // 1 point per $160, capped above.
       const servicePoints = service.value === "general" ? generalServicePoints : specializedServicePoints;
       const total = Math.min(maxScore, urgencyPoints[urgency.value] + valuePoints + servicePoints);
 
