@@ -18,24 +18,14 @@
         <span class="brand-word">JobTap</span>
       </a>
 
-      <div class="category-tabs" aria-label="JobTap sections">
-        <a class="category-tab active" href="#priority-jobs-section">
-          <span class="tab-icon">J</span>
-          <span>Jobs</span>
-        </a>
-        <a class="category-tab" href="#contractor-lanes-section">
-          <span class="tab-icon">C</span>
-          <span>Contractors</span>
-        </a>
-        <a class="category-tab" href="#intake">
-          <span class="tab-icon">R</span>
-          <span>Routing</span>
-        </a>
+      <div class="nav-links" aria-label="JobTap sections">
+        <a href="#priority-jobs-section">Jobs</a>
+        <a href="#contractor-lanes-section">Contractors</a>
+        <a href="#backend">Backend</a>
       </div>
 
       <div class="nav-actions">
-        <a href="#intake">Run intake</a>
-        <a class="round-action" href="#backend" aria-label="View backend model">i</a>
+        <a class="nav-cta" href="#intake">Run intake</a>
         <button class="round-action menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
           <span></span><span></span>
         </button>
@@ -45,59 +35,59 @@
     <div class="mobile-menu" id="mobile-menu" hidden>
       <a href="#priority-jobs-section">Priority jobs</a>
       <a href="#contractor-lanes-section">Contractor lanes</a>
-      <a href="#intake">Run intake</a>
       <a href="#backend">Backend model</a>
+      <a href="#intake">Run intake</a>
     </div>
-
-    <form class="routing-search" id="quick-route-form" aria-label="Quick job routing search">
-      <label>
-        <span>What work?</span>
-        <select name="serviceType">
-          <option>Roofing</option>
-          <option>Electrical</option>
-          <option>HVAC</option>
-          <option>Plumbing</option>
-          <option>General Repair</option>
-          <option>Gutters</option>
-          <option>Siding</option>
-          <option>Windows</option>
-        </select>
-      </label>
-      <label>
-        <span>Where?</span>
-        <input name="zipCode" value="55904" inputmode="numeric" aria-label="Zip code" />
-      </label>
-      <label>
-        <span>How urgent?</span>
-        <select name="urgency">
-          <option>Emergency</option>
-          <option>High</option>
-          <option>Medium</option>
-          <option>Low</option>
-        </select>
-      </label>
-      <label>
-        <span>Job value</span>
-        <input name="estimatedValue" type="number" min="100" step="100" value="4200" aria-label="Estimated value" />
-      </label>
-      <button class="search-button" type="submit" aria-label="Route job">Route</button>
-    </form>
   </header>
 
   <main id="top">
-    <section class="market-intro" aria-labelledby="hero-title">
-      <div>
+    <section class="hero" aria-labelledby="hero-title">
+      <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+      <div class="hero-scrim"></div>
+      <div class="hero-content">
         <p class="eyebrow">AI routing for service operators</p>
         <h1 id="hero-title">Stop losing jobs in the handoff.</h1>
-      </div>
-      <div class="intro-copy">
-        <p>JobTap.OS turns inbound repair requests into scored, ranked, dispatch-ready work. It shows which jobs matter now, which contractor lane should get them, and what should happen next.</p>
-        <div class="intro-metrics" aria-label="Routing proof metrics">
-          <span><b>99</b> max route score</span>
-          <span><b>3</b> dispatch lanes</span>
-          <span><b>0</b> browser secrets</span>
+        <p class="hero-copy">JobTap.OS scores inbound repair requests, ranks contractor fit, and queues dispatch-ready jobs before the lead goes cold.</p>
+        <div class="hero-actions">
+          <a class="btn hero-btn" href="#intake">Run intake</a>
+          <a class="hero-link" href="#priority-jobs-section">See routed jobs</a>
         </div>
+        <p class="hero-proof">Scores urgency, ranks contractors, and stages clean Airtable handoffs without browser secrets.</p>
       </div>
+
+      <form class="routing-search hero-search" id="quick-route-form" aria-label="Quick job routing search">
+        <label>
+          <span>What work?</span>
+          <select name="serviceType">
+            <option>Roofing</option>
+            <option>Electrical</option>
+            <option>HVAC</option>
+            <option>Plumbing</option>
+            <option>General Repair</option>
+            <option>Gutters</option>
+            <option>Siding</option>
+            <option>Windows</option>
+          </select>
+        </label>
+        <label>
+          <span>Where?</span>
+          <input name="zipCode" value="55904" inputmode="numeric" aria-label="Zip code" />
+        </label>
+        <label>
+          <span>How urgent?</span>
+          <select name="urgency">
+            <option>Emergency</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </label>
+        <label>
+          <span>Job value</span>
+          <input name="estimatedValue" type="number" min="100" step="100" value="4200" aria-label="Estimated value" />
+        </label>
+        <button class="search-button" type="submit" aria-label="Route job">Route</button>
+      </form>
     </section>
 
     <section id="priority-jobs-section" class="market-row" aria-labelledby="priority-title">
