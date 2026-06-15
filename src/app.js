@@ -1,17 +1,26 @@
-import { DEFAULT_CONFIG, buildAirtablePayload, rankContractors, scoreJob } from "./routing.js";
+import {
+  DEFAULT_CONFIG,
+  buildAirtablePayload,
+  buildWebsiteIntakeRecord,
+  getNextActions,
+  rankContractors,
+  scoreJob
+} from "./routing.js";
+
+const queueKey = "jobtap.intakeQueue";
 
 const sampleJobs = [
   {
-    jobName: "Roof leak repair",
+    jobName: "Active roof leak",
     serviceType: "Roofing",
     urgency: "Emergency",
     estimatedValue: 4200,
     zipCode: "55904",
-    badge: "Urgent route",
+    badge: "Immediate route",
     media: "gold"
   },
   {
-    jobName: "Electrical panel issue",
+    jobName: "Panel replacement",
     serviceType: "Electrical",
     urgency: "High",
     estimatedValue: 3200,
@@ -60,7 +69,7 @@ const sampleJobs = [
 const contractorLanes = [
   {
     name: "Emergency roofing lane",
-    detail: "Licensed roofers for leaks, storm damage, and active water intrusion.",
+    detail: "Leaks, storm damage, and active water intrusion.",
     serviceType: "Roofing",
     urgency: "Emergency",
     estimatedValue: 4200,
@@ -70,7 +79,7 @@ const contractorLanes = [
   },
   {
     name: "Electrical response lane",
-    detail: "Qualified electricians for panels, lighting, and urgent troubleshooting.",
+    detail: "Panels, lighting, and urgent troubleshooting.",
     serviceType: "Electrical",
     urgency: "High",
     estimatedValue: 3200,
@@ -80,7 +89,7 @@ const contractorLanes = [
   },
   {
     name: "Exterior work lane",
-    detail: "Gutters, siding, windows, and weather-facing repair routes.",
+    detail: "Gutters, siding, windows, and weather-facing repair.",
     serviceType: "Gutters",
     urgency: "Medium",
     estimatedValue: 2600,
@@ -90,7 +99,7 @@ const contractorLanes = [
   },
   {
     name: "Mechanical service lane",
-    detail: "HVAC and plumbing requests routed by urgency and coverage.",
+    detail: "HVAC and plumbing requests routed by coverage.",
     serviceType: "HVAC",
     urgency: "High",
     estimatedValue: 1800,
@@ -100,7 +109,7 @@ const contractorLanes = [
   },
   {
     name: "General repair lane",
-    detail: "Lower-urgency handyman work held cleanly in the standard queue.",
+    detail: "Lower-urgency work held cleanly in queue.",
     serviceType: "General Repair",
     urgency: "Low",
     estimatedValue: 650,
@@ -120,9 +129,11 @@ function renderPriorityJobs() {
       title: job.jobName,
       badge: job.badge,
       media: job.media,
+      mediaTitle: result.lane,
       lineOne: `${job.serviceType} in ${job.zipCode}`,
-      lineTwo: `${currency.format(job.estimatedValue)} est. value - Score ${result.score}`,
-      saveLabel: result.lane === "Immediate Dispatch" ? "A" : "R"
+      lineTwo: `${currency.format(job.estimatedValue)} est. value`,
+      saveLabel: result.score,
+      metrics: [result.lane, `Score ${result.score}`, result.contractorType]
     });
   }).join("");
 }
@@ -131,30 +142,36 @@ function renderContractorLanes() {
   const container = document.querySelector("#contractor-lanes");
   container.innerHTML = contractorLanes.map((lane) => {
     const result = scoreJob(lane);
-    const matches = rankContractors(lane).slice(0, 1);
-    const topMatch = matches[0]?.name || result.contractorType;
+    const topMatch = rankContractors(lane).slice(0, 1)[0]?.name || result.contractorType;
     return cardTemplate({
       title: lane.name,
       badge: lane.badge,
       media: lane.media,
+      mediaTitle: topMatch,
       lineOne: lane.detail,
-      lineTwo: `${result.lane} - Top match: ${topMatch}`,
-      saveLabel: "M"
+      lineTwo: result.reason,
+      saveLabel: "M",
+      metrics: [result.lane, `Top: ${topMatch}`, `Score ${result.score}`]
     });
   }).join("");
 }
 
-function cardTemplate({ title, badge, media, lineOne, lineTwo, saveLabel }) {
+function cardTemplate({ title, badge, media, mediaTitle, lineOne, lineTwo, saveLabel, metrics }) {
   return `
     <article class="listing-card">
-      <div class="card-media ${media}">
-        <span class="card-badge">${badge}</span>
-        <span class="card-save">${saveLabel}</span>
+      <div class="card-media ${escapeHtml(media)}">
+        <span class="card-badge">${escapeHtml(badge)}</span>
+        <span class="card-save">${escapeHtml(String(saveLabel))}</span>
+        <div class="media-shell">
+          <b>${escapeHtml(mediaTitle)}</b>
+          <div class="media-bars"><span></span><span></span><span></span></div>
+        </div>
       </div>
       <div class="card-copy">
-        <b>${title}</b>
-        <span>${lineOne}</span>
-        <small>${lineTwo}</small>
+        <b>${escapeHtml(title)}</b>
+        <span>${escapeHtml(lineOne)}</span>
+        <small>${escapeHtml(lineTwo)}</small>
+        <div class="card-metrics">${metrics.map((item) => `<em>${escapeHtml(item)}</em>`).join("")}</div>
       </div>
     </article>
   `;
@@ -166,7 +183,7 @@ function readForm(selector) {
   return Object.fromEntries(data.entries());
 }
 
-function syncDemoForm(input) {
+function syncIntakeForm(input) {
   const form = document.querySelector("#routing-form");
   if (!form) return;
   Object.entries(input).forEach(([key, value]) => {
@@ -175,9 +192,11 @@ function syncDemoForm(input) {
   });
 }
 
-function renderResult(input) {
+function renderResult(input, options = {}) {
   const result = scoreJob(input, DEFAULT_CONFIG);
   const matches = rankContractors(input, DEFAULT_CONFIG).slice(0, 3);
+  const intakeRecord = buildWebsiteIntakeRecord(input, DEFAULT_CONFIG);
+  const actions = getNextActions(input, DEFAULT_CONFIG);
 
   document.querySelector("#result-score").textContent = result.score;
   document.querySelector("#result-lane").textContent = result.lane;
@@ -185,19 +204,52 @@ function renderResult(input) {
   document.querySelector("#result-reason").textContent = result.reason;
 
   document.querySelector("#match-list").innerHTML = matches.map((match) => (
-    `<li><strong>${match.rank}. ${match.name}</strong><br />Score ${match.matchScore}. ${match.whyMatched}</li>`
+    `<li><strong>${match.rank}. ${escapeHtml(match.name)}</strong><br />Score ${match.matchScore}. ${escapeHtml(match.whyMatched)}</li>`
   )).join("");
 
+  document.querySelector("#action-list").innerHTML = actions.map((action) => `<li>${escapeHtml(action)}</li>`).join("");
+
   window.JobTapLastPayload = buildAirtablePayload(input, DEFAULT_CONFIG);
+  window.JobTapLastSubmission = intakeRecord;
+
+  if (options.persist) {
+    persistSubmission(intakeRecord);
+    updateQueueStatus(`Queued ${intakeRecord.fields["Submission ID"]} for secure API handoff.`);
+  } else {
+    updateQueueStatus("Ready to submit.");
+  }
+
+  return intakeRecord;
+}
+
+function persistSubmission(intakeRecord) {
+  const queue = getQueue();
+  queue.unshift({ ...intakeRecord, queuedAt: new Date().toISOString() });
+  localStorage.setItem(queueKey, JSON.stringify(queue.slice(0, 25)));
+}
+
+function getQueue() {
+  try {
+    return JSON.parse(localStorage.getItem(queueKey) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function updateQueueStatus(message) {
+  const count = getQueue().length;
+  document.querySelector("#queue-status").textContent = message;
+  document.querySelector("#queue-count").textContent = `${count} package${count === 1 ? "" : "s"} queued in this browser session.`;
 }
 
 function wireForms() {
   const demoForm = document.querySelector("#routing-form");
   const quickForm = document.querySelector("#quick-route-form");
+  const copyButton = document.querySelector("#copy-payload");
 
   demoForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    renderResult(readForm("#routing-form"));
+    renderResult(readForm("#routing-form"), { persist: true });
   });
 
   demoForm.addEventListener("input", () => renderResult(readForm("#routing-form")));
@@ -206,10 +258,56 @@ function wireForms() {
   quickForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const input = readForm("#quick-route-form");
-    syncDemoForm({ ...input, description: document.querySelector("#description").value });
-    renderResult({ ...input, description: document.querySelector("#description").value });
-    document.querySelector("#demo").scrollIntoView({ behavior: "smooth", block: "start" });
+    const description = document.querySelector("#description").value;
+    syncIntakeForm({ ...input, description });
+    renderResult({ ...readForm("#routing-form"), ...input, description });
+    document.querySelector("#intake").scrollIntoView({ behavior: "smooth", block: "start" });
   });
+
+  copyButton.addEventListener("click", async () => {
+    const current = JSON.stringify(window.JobTapLastSubmission || {}, null, 2);
+    try {
+      await navigator.clipboard.writeText(current);
+      updateQueueStatus("Copied current intake package to clipboard.");
+    } catch {
+      updateQueueStatus("Current package is available at window.JobTapLastSubmission.");
+    }
+  });
+}
+
+function wireScrolling() {
+  document.querySelectorAll("[data-scroll-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = document.getElementById(button.dataset.scrollTarget);
+      const direction = button.dataset.scrollDirection === "prev" ? -1 : 1;
+      if (!target) return;
+      target.scrollBy({ left: direction * Math.round(target.clientWidth * 0.85), behavior: "smooth" });
+    });
+  });
+}
+
+function wireMobileMenu() {
+  const toggle = document.querySelector(".menu-toggle");
+  const menu = document.querySelector("#mobile-menu");
+  toggle.addEventListener("click", () => {
+    const isOpen = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!isOpen));
+    menu.hidden = isOpen;
+  });
+  menu.addEventListener("click", (event) => {
+    if (event.target.tagName !== "A") return;
+    toggle.setAttribute("aria-expanded", "false");
+    menu.hidden = true;
+  });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"]/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;"
+  }[char]));
 }
 
 function boot() {
@@ -217,6 +315,8 @@ function boot() {
   renderContractorLanes();
   renderResult(readForm("#routing-form"));
   wireForms();
+  wireScrolling();
+  wireMobileMenu();
 }
 
 boot();
