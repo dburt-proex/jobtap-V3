@@ -466,6 +466,7 @@
       plumbing: "Licensed Plumber",
       general: "General Repair Contractor"
     };
+    // Scoring breakdown: urgency (10-45), value (0-35), and service fit (8-16) for a max of 96.
     const urgencyPoints = { emergency: 45, high: 34, medium: 22, low: 10 };
     const maxValuePoints = 35;
     const dollarsPerPoint = 160;
@@ -474,7 +475,7 @@
     const maxScore = 96;
 
     function scoreJob() {
-      const valuePoints = Math.min(maxValuePoints, Math.floor(Number(value.value || 0) / dollarsPerPoint)); // 1 point per $160, capped above.
+      const valuePoints = Math.min(maxValuePoints, Math.floor(Number(value.value || 0) / dollarsPerPoint)); // 1 point per `dollarsPerPoint`.
       const servicePoints = service.value === "general" ? generalServicePoints : specializedServicePoints;
       const total = Math.min(maxScore, urgencyPoints[urgency.value] + valuePoints + servicePoints);
 
