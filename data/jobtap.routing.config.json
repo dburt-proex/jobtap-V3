@@ -1,0 +1,39 @@
+{
+  "system": "JobTap.OS",
+  "version": "3.0",
+  "scoringModel": {
+    "urgencyWeights": {
+      "Emergency": 45,
+      "High": 34,
+      "Medium": 22,
+      "Low": 10
+    },
+    "valueScoring": {
+      "dollarsPerPoint": 160,
+      "maxPoints": 35
+    },
+    "serviceFitWeights": {
+      "specialized": 16,
+      "general": 8
+    },
+    "routingLanes": [
+      { "name": "Immediate Dispatch", "minScore": 85 },
+      { "name": "Priority Review", "minScore": 65 },
+      { "name": "Standard Queue", "minScore": 0 }
+    ]
+  },
+  "airtableModel": {
+    "tables": [
+      "Homeowners",
+      "Jobs",
+      "Contractors",
+      "Matches",
+      "Tasks",
+      "Payments",
+      "Reviews",
+      "Routing Rules"
+    ],
+    "publicFieldMappingOnly": true,
+    "notes": "This file intentionally excludes Airtable base IDs, field IDs, API keys, and private connector identifiers."
+  }
+}
