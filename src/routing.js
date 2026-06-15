@@ -70,16 +70,39 @@ const DEFAULT_CONFIG = {
   ]
 };
 
-const titleCase = (value) => String(value || "")
-  .trim()
-  .replace(/[-_]+/g, " ")
-  .replace(/\w\S*/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+const SERVICE_ALIASES = {
+  roofing: "Roofing",
+  electrical: "Electrical",
+  hvac: "HVAC",
+  plumbing: "Plumbing",
+  "general repair": "General Repair",
+  general: "General Repair",
+  gutters: "Gutters",
+  gutter: "Gutters",
+  siding: "Siding",
+  windows: "Windows",
+  window: "Windows",
+  doors: "Doors",
+  door: "Doors"
+};
+
+const URGENCY_ALIASES = {
+  emergency: "Emergency",
+  high: "High",
+  medium: "Medium",
+  low: "Low"
+};
+
+function canonicalize(value, aliases, fallback) {
+  const key = String(value || "").trim().replace(/[-_]+/g, " ").toLowerCase();
+  return aliases[key] || fallback;
+}
 
 export function normalizeJob(input) {
   return {
     jobName: input.jobName || `${input.serviceType || "Service"} request`,
-    serviceType: titleCase(input.serviceType || "General Repair"),
-    urgency: titleCase(input.urgency || "Low"),
+    serviceType: canonicalize(input.serviceType, SERVICE_ALIASES, "General Repair"),
+    urgency: canonicalize(input.urgency, URGENCY_ALIASES, "Low"),
     estimatedValue: Math.max(0, Number(input.estimatedValue || 0)),
     zipCode: String(input.zipCode || "").trim(),
     description: String(input.description || "").trim()
