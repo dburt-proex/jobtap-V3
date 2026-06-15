@@ -1,6 +1,6 @@
 {
   "system": "JobTap.OS",
-  "version": "3.0",
+  "version": "3.1",
   "scoringModel": {
     "urgencyWeights": {
       "Emergency": 45,
@@ -24,6 +24,7 @@
   },
   "airtableModel": {
     "tables": [
+      "Website Intake Queue",
       "Homeowners",
       "Jobs",
       "Contractors",
@@ -35,5 +36,10 @@
     ],
     "publicFieldMappingOnly": true,
     "notes": "This file intentionally excludes Airtable base IDs, field IDs, API keys, and private connector identifiers."
+  },
+  "intakeFlow": {
+    "browserBehavior": "Score request, rank contractors, create local Airtable-ready handoff package.",
+    "productionBehavior": "Submit to a secure server endpoint that validates input and writes to Website Intake Queue, Jobs, Matches, and Tasks.",
+    "securityRule": "Never expose Airtable credentials in the browser."
   }
 }
