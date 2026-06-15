@@ -470,10 +470,10 @@
     function scoreJob() {
       const urgencyPoints = { emergency: 45, high: 34, medium: 22, low: 10 };
       const maxValuePoints = 35;
-      const dollarsPerValuePoint = 160;
+      const dollarsPerPoint = 160;
       const generalServicePoints = 8;
       const specializedServicePoints = 16;
-      const valuePoints = Math.min(maxValuePoints, Math.floor(Number(value.value || 0) / dollarsPerValuePoint));
+      const valuePoints = Math.min(maxValuePoints, Math.floor(Number(value.value || 0) / dollarsPerPoint));
       const servicePoints = service.value === "general" ? generalServicePoints : specializedServicePoints;
       const total = Math.min(99, urgencyPoints[urgency.value] + valuePoints + servicePoints);
 
