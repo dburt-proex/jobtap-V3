@@ -3,8 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>JobTap.OS | AI Job Routing & Contractor Matching</title>
-  <meta name="description" content="JobTap.OS scores service requests, ranks urgency and value, matches contractors, and routes jobs through a monitored dispatch pipeline." />
+  <title>JobTap.OS | AI Job Routing for Contractor Networks</title>
+  <meta name="description" content="JobTap.OS scores service requests, ranks urgency and value, matches contractors, and turns job intake into dispatch-ready work." />
+  <meta property="og:title" content="JobTap.OS | AI Job Routing for Contractor Networks" />
+  <meta property="og:description" content="Score, match, and dispatch service jobs before the lead goes cold." />
+  <meta property="og:type" content="website" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -12,34 +15,43 @@
     <nav class="nav" aria-label="Primary navigation">
       <a class="brand" href="#top" aria-label="JobTap home">
         <span class="brand-mark">JT</span>
-        <span>jobtap</span>
+        <span class="brand-word">JobTap</span>
       </a>
 
-      <div class="category-tabs" aria-label="JobTap categories">
+      <div class="category-tabs" aria-label="JobTap sections">
         <a class="category-tab active" href="#priority-jobs-section">
-          <span class="tab-icon">01</span>
+          <span class="tab-icon">J</span>
           <span>Jobs</span>
         </a>
         <a class="category-tab" href="#contractor-lanes-section">
-          <span class="tab-icon">02</span>
+          <span class="tab-icon">C</span>
           <span>Contractors</span>
         </a>
-        <a class="category-tab" href="#demo">
-          <span class="tab-icon">03</span>
+        <a class="category-tab" href="#intake">
+          <span class="tab-icon">R</span>
           <span>Routing</span>
         </a>
       </div>
 
       <div class="nav-actions">
-        <a href="mailto:drewburt4@gmail.com?subject=JobTap.OS%20Contractor%20Network">Become a contractor</a>
-        <a class="round-action" href="#backend" aria-label="View operating model">i</a>
-        <button class="round-action" type="button" aria-label="Open menu">=</button>
+        <a href="#intake">Run intake</a>
+        <a class="round-action" href="#backend" aria-label="View backend model">i</a>
+        <button class="round-action menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+          <span></span><span></span>
+        </button>
       </div>
     </nav>
 
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <a href="#priority-jobs-section">Priority jobs</a>
+      <a href="#contractor-lanes-section">Contractor lanes</a>
+      <a href="#intake">Run intake</a>
+      <a href="#backend">Backend model</a>
+    </div>
+
     <form class="routing-search" id="quick-route-form" aria-label="Quick job routing search">
       <label>
-        <span>Service</span>
+        <span>What work?</span>
         <select name="serviceType">
           <option>Roofing</option>
           <option>Electrical</option>
@@ -52,11 +64,11 @@
         </select>
       </label>
       <label>
-        <span>Location</span>
-        <input name="zipCode" value="55904" aria-label="Zip code" />
+        <span>Where?</span>
+        <input name="zipCode" value="55904" inputmode="numeric" aria-label="Zip code" />
       </label>
       <label>
-        <span>Urgency</span>
+        <span>How urgent?</span>
         <select name="urgency">
           <option>Emergency</option>
           <option>High</option>
@@ -65,139 +77,186 @@
         </select>
       </label>
       <label>
-        <span>Est. value</span>
+        <span>Job value</span>
         <input name="estimatedValue" type="number" min="100" step="100" value="4200" aria-label="Estimated value" />
       </label>
-      <button class="search-button" type="submit" aria-label="Score route">Go</button>
+      <button class="search-button" type="submit" aria-label="Route job">Route</button>
     </form>
   </header>
 
   <main id="top">
-    <section class="market-intro">
+    <section class="market-intro" aria-labelledby="hero-title">
       <div>
-        <p class="eyebrow">AI job routing for service operators</p>
-        <h1>Route the right job to the right contractor.</h1>
+        <p class="eyebrow">AI routing for service operators</p>
+        <h1 id="hero-title">Stop losing jobs in the handoff.</h1>
       </div>
-      <p>JobTap.OS turns incoming service requests into scored, ranked, dispatch-ready work. It is built for local contractor networks, property managers, and repair operators that need cleaner handoffs.</p>
+      <div class="intro-copy">
+        <p>JobTap.OS turns inbound repair requests into scored, ranked, dispatch-ready work. It shows which jobs matter now, which contractor lane should get them, and what should happen next.</p>
+        <div class="intro-metrics" aria-label="Routing proof metrics">
+          <span><b>99</b> max route score</span>
+          <span><b>3</b> dispatch lanes</span>
+          <span><b>0</b> browser secrets</span>
+        </div>
+      </div>
     </section>
 
     <section id="priority-jobs-section" class="market-row" aria-labelledby="priority-title">
       <div class="row-head">
         <div>
           <h2 id="priority-title">Priority jobs in Rochester</h2>
-          <p>High-signal examples of the work JobTap.OS is built to score and route.</p>
+          <p>Service requests scored by urgency, value, specialty fit, and dispatch lane.</p>
         </div>
-        <div class="row-controls" aria-hidden="true"><span>‹</span><span>›</span></div>
+        <div class="row-controls">
+          <button type="button" data-scroll-target="priority-jobs" data-scroll-direction="prev" aria-label="Scroll priority jobs left">‹</button>
+          <button type="button" data-scroll-target="priority-jobs" data-scroll-direction="next" aria-label="Scroll priority jobs right">›</button>
+        </div>
       </div>
-      <div class="card-scroller" id="priority-jobs"></div>
+      <div class="card-scroller" id="priority-jobs" tabindex="0" aria-label="Priority job cards"></div>
     </section>
 
     <section id="contractor-lanes-section" class="market-row" aria-labelledby="lanes-title">
       <div class="row-head">
         <div>
           <h2 id="lanes-title">Contractor lanes ready to route</h2>
-          <p>Specialized dispatch paths ranked by urgency, value, coverage, and availability.</p>
+          <p>Specialized dispatch paths ranked by coverage, availability, qualification, and close potential.</p>
         </div>
-        <div class="row-controls" aria-hidden="true"><span>‹</span><span>›</span></div>
+        <div class="row-controls">
+          <button type="button" data-scroll-target="contractor-lanes" data-scroll-direction="prev" aria-label="Scroll contractor lanes left">‹</button>
+          <button type="button" data-scroll-target="contractor-lanes" data-scroll-direction="next" aria-label="Scroll contractor lanes right">›</button>
+        </div>
       </div>
-      <div class="card-scroller" id="contractor-lanes"></div>
+      <div class="card-scroller" id="contractor-lanes" tabindex="0" aria-label="Contractor lane cards"></div>
     </section>
 
     <section class="market-row" aria-labelledby="proof-title">
       <div class="row-head">
         <div>
-          <h2 id="proof-title">Built for operational control</h2>
-          <p>The homepage shows the workflow like a marketplace. The system underneath tracks the actual state.</p>
+          <h2 id="proof-title">Operational control, not just a pretty page</h2>
+          <p>The public page sells the workflow. The routing model underneath creates the records an operator actually needs.</p>
         </div>
       </div>
       <div class="proof-strip">
-        <article><b>Intake</b><span>Structured request capture</span></article>
-        <article><b>Score</b><span>Urgency, value, service fit</span></article>
-        <article><b>Match</b><span>Contractor ranking and eligibility</span></article>
-        <article><b>Dispatch</b><span>Immediate, review, or queue</span></article>
+        <article><b>Intake</b><span>Capture homeowner, service, zip, urgency, value, and notes.</span></article>
+        <article><b>Score</b><span>Apply deterministic rules that match the Airtable operating model.</span></article>
+        <article><b>Match</b><span>Rank eligible contractors by specialty, coverage, and reliability.</span></article>
+        <article><b>Dispatch</b><span>Create the package for Jobs, Matches, Tasks, and intake queue review.</span></article>
       </div>
     </section>
 
-    <section id="demo" class="section demo-section">
+    <section id="intake" class="section intake-section" aria-labelledby="intake-title">
       <div class="section-head">
-        <p class="eyebrow">Live routing demo</p>
-        <h2>Score a job request.</h2>
-        <p>Use this as the proof engine behind the marketplace-style homepage. The page stays simple; the logic still shows real routing decisions.</p>
+        <p class="eyebrow">Live intake flow</p>
+        <h2 id="intake-title">Route a real request through the system.</h2>
+        <p>This form scores the job, ranks contractors, produces a conversion-ready result, and builds the payload shape a secure server would send to Airtable.</p>
       </div>
 
       <div class="simulator">
-        <form class="panel" id="routing-form">
-          <label for="serviceType">Service Type</label>
-          <select id="serviceType" name="serviceType">
-            <option>Roofing</option>
-            <option>Electrical</option>
-            <option>HVAC</option>
-            <option>Plumbing</option>
-            <option>General Repair</option>
-            <option>Gutters</option>
-            <option>Siding</option>
-            <option>Windows</option>
-          </select>
+        <form class="panel intake-form" id="routing-form">
+          <div class="field-grid two-col">
+            <label for="contactName">Name
+              <input id="contactName" name="contactName" type="text" value="Demo Homeowner" autocomplete="name" />
+            </label>
+            <label for="email">Email
+              <input id="email" name="email" type="email" value="demo@example.com" autocomplete="email" />
+            </label>
+            <label for="phone">Phone
+              <input id="phone" name="phone" type="tel" value="507-555-0142" autocomplete="tel" />
+            </label>
+            <label for="zipCode">Zip Code
+              <input id="zipCode" name="zipCode" type="text" value="55904" inputmode="numeric" />
+            </label>
+          </div>
 
-          <label for="urgency">Urgency</label>
-          <select id="urgency" name="urgency">
-            <option>Emergency</option>
-            <option>High</option>
-            <option>Medium</option>
-            <option>Low</option>
-          </select>
+          <div class="field-grid three-col">
+            <label for="serviceType">Service Type
+              <select id="serviceType" name="serviceType">
+                <option>Roofing</option>
+                <option>Electrical</option>
+                <option>HVAC</option>
+                <option>Plumbing</option>
+                <option>General Repair</option>
+                <option>Gutters</option>
+                <option>Siding</option>
+                <option>Windows</option>
+              </select>
+            </label>
+            <label for="urgency">Urgency
+              <select id="urgency" name="urgency">
+                <option>Emergency</option>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </label>
+            <label for="estimatedValue">Estimated Value
+              <input id="estimatedValue" name="estimatedValue" type="number" min="100" step="100" value="4200" />
+            </label>
+          </div>
 
-          <label for="estimatedValue">Estimated Value</label>
-          <input id="estimatedValue" name="estimatedValue" type="number" min="100" step="100" value="4200" />
+          <label for="description">Job Notes
+            <textarea id="description" name="description">Active leak near rear transition. Needs fast inspection and qualified exterior crew.</textarea>
+          </label>
 
-          <label for="zipCode">Zip Code</label>
-          <input id="zipCode" name="zipCode" type="text" value="55904" />
-
-          <label for="description">Job Notes</label>
-          <textarea id="description" name="description">Active leak near rear transition. Needs fast inspection and qualified exterior crew.</textarea>
-
-          <button class="btn form-btn" type="submit">Score Job</button>
+          <div class="form-actions">
+            <button class="btn form-btn" type="submit">Route this job</button>
+            <button class="btn secondary" id="copy-payload" type="button">Copy package</button>
+          </div>
+          <p class="form-note">No Airtable token is exposed in the browser. Production submission belongs behind a secure API endpoint.</p>
         </form>
 
         <aside class="panel result-panel" aria-live="polite">
-          <div class="result-row"><span>Priority Score</span><strong id="result-score">94</strong></div>
-          <div class="result-row"><span>Routing Lane</span><strong id="result-lane">Immediate Dispatch</strong></div>
+          <div class="score-card">
+            <span>Priority Score</span>
+            <strong id="result-score">94</strong>
+            <small id="result-lane">Immediate Dispatch</small>
+          </div>
           <div class="result-row"><span>Contractor Type</span><strong id="result-contractor">Licensed Roofer</strong></div>
           <div class="result-row"><span>Reason</span><strong id="result-reason">Emergency roofing request with high value and active damage risk.</strong></div>
           <div>
             <h3>Top Contractor Matches</h3>
             <ol class="match-list" id="match-list"></ol>
           </div>
+          <div>
+            <h3>Next Actions</h3>
+            <ul class="action-list" id="action-list"></ul>
+          </div>
+          <div class="queue-card">
+            <span id="queue-status">Ready to submit.</span>
+            <small id="queue-count">0 packages queued in this browser session.</small>
+          </div>
         </aside>
       </div>
     </section>
 
-    <section id="backend" class="section backend-section">
+    <section id="backend" class="section backend-section" aria-labelledby="backend-title">
       <div class="backend-card">
         <div>
           <p class="eyebrow">Structured operations backend</p>
-          <h2>Marketplace front. Routing system underneath.</h2>
-          <p>JobTap.OS tracks jobs, contractors, matches, tasks, routing rules, and revenue outcomes. The public page sells the workflow; the backend controls the dispatch logic.</p>
+          <h2 id="backend-title">Airtable stays the operator cockpit.</h2>
+          <p>Airtable is used as the visible admin layer while JobTap is early: intake queue, jobs, contractors, matches, tasks, payments, reviews, and routing rules. Long term, the production database should move behind a proper app backend.</p>
         </div>
         <div class="backend-grid">
-          <div><b>Jobs</b><span>Request, urgency, value, service type, score, routing status</span></div>
-          <div><b>Contractors</b><span>Specialties, coverage, availability, qualification, performance</span></div>
-          <div><b>Matches</b><span>Contractor ranking, match score, dispatch order, outcome</span></div>
-          <div><b>Routing Rules</b><span>Deterministic scoring rules and dispatch thresholds</span></div>
+          <div><b>Website Intake Queue</b><span>Public submissions staged for review and promotion.</span></div>
+          <div><b>Jobs</b><span>Service request, urgency, value, score, and routing status.</span></div>
+          <div><b>Matches</b><span>Ranked contractor options with match score and dispatch order.</span></div>
+          <div><b>Tasks</b><span>Follow-up work created by routing lane and operator policy.</span></div>
         </div>
       </div>
     </section>
 
-    <section class="cta" aria-label="Request a demo">
+    <section class="cta" aria-label="Run JobTap intake">
       <div>
-        <h2>Turn service requests into routed work.</h2>
-        <p>Built for operators who need faster dispatch, cleaner handoffs, and a visible contractor matching layer.</p>
+        <h2>Score, match, and dispatch before the lead goes cold.</h2>
+        <p>Use the intake flow above as the public conversion path. Use Airtable as the operator cockpit until a production backend replaces it.</p>
       </div>
-      <a class="btn light" href="mailto:drewburt4@gmail.com?subject=JobTap.OS%20Demo%20Request">Request Demo</a>
+      <a class="btn light" href="#intake">Run intake</a>
     </section>
   </main>
 
-  <footer class="footer">JobTap.OS | AI-assisted job scoring, contractor matching, and service pipeline control.</footer>
+  <footer class="footer">
+    <span>JobTap.OS</span>
+    <span>AI-assisted job scoring, contractor matching, and service pipeline control.</span>
+  </footer>
   <script type="module" src="src/app.js"></script>
 </body>
 </html>
