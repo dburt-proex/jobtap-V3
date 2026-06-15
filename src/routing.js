@@ -105,7 +105,10 @@ export function normalizeJob(input) {
     urgency: canonicalize(input.urgency, URGENCY_ALIASES, "Low"),
     estimatedValue: Math.max(0, Number(input.estimatedValue || 0)),
     zipCode: String(input.zipCode || "").trim(),
-    description: String(input.description || "").trim()
+    description: String(input.description || "").trim(),
+    contactName: String(input.contactName || "").trim(),
+    email: String(input.email || "").trim(),
+    phone: String(input.phone || "").trim()
   };
 }
 
@@ -124,7 +127,7 @@ export function scoreJob(input, config = DEFAULT_CONFIG) {
     score,
     lane: lane.name,
     contractorType,
-    reason: buildReason(job, score, lane.name, contractorType),
+    reason: buildReason(job, lane.name, contractorType),
     components: {
       urgency: urgencyPoints,
       value: valuePoints,
@@ -186,7 +189,61 @@ export function buildAirtablePayload(input, config = DEFAULT_CONFIG) {
   };
 }
 
-function buildReason(job, score, lane, contractorType) {
+export function buildWebsiteIntakeRecord(input, config = DEFAULT_CONFIG) {
+  const result = scoreJob(input, config);
+  const matches = rankContractors(input, config);
+  const topMatch = matches[0]?.name || result.contractorType;
+  const payload = buildAirtablePayload(input, config);
+  const submissionId = input.submissionId || buildSubmissionId(result.job);
+
+  return {
+    table: "Website Intake Queue",
+    fields: {
+      "Submission ID": submissionId,
+      "Contact Name": result.job.contactName,
+      Email: result.job.email,
+      Phone: result.job.phone,
+      "Service Type": result.job.serviceType,
+      Urgency: result.job.urgency,
+      "Estimated Value": result.job.estimatedValue,
+      "Zip Code": result.job.zipCode,
+      "Job Notes": result.job.description,
+      "Routing Score": result.score,
+      "Routing Lane": result.lane,
+      "Qualified Lead": result.score >= 65,
+      "Top Contractor Match": topMatch,
+      "Intake Status": "New",
+      Source: "Website Demo",
+      Payload: JSON.stringify(payload, null, 2)
+    },
+    payload
+  };
+}
+
+export function getNextActions(input, config = DEFAULT_CONFIG) {
+  const result = scoreJob(input, config);
+  if (result.lane === "Immediate Dispatch") {
+    return [
+      "Create Website Intake Queue record for operator visibility.",
+      "Promote the request into Jobs after validation.",
+      "Create top three Matches and notify the first qualified contractor."
+    ];
+  }
+  if (result.lane === "Priority Review") {
+    return [
+      "Create intake record and flag it for same-day review.",
+      "Confirm scope, budget, and homeowner contact quality.",
+      "Promote to Jobs once operator approves the dispatch lane."
+    ];
+  }
+  return [
+    "Create intake record and hold in nurture queue.",
+    "Request missing scope or budget details before dispatch.",
+    "Re-score if urgency or estimated value changes."
+  ];
+}
+
+function buildReason(job, lane, contractorType) {
   if (lane === "Immediate Dispatch") {
     return `${job.urgency} ${job.serviceType.toLowerCase()} request with strong value and a clear ${contractorType.toLowerCase()} fit.`;
   }
@@ -203,6 +260,12 @@ function explainMatch(contractor, job, matchScore) {
   if (contractor.availability === "Open" || contractor.availability === "On-call") reasons.push("available capacity");
   if (contractor.performanceScore >= 90) reasons.push("high performance score");
   return `${contractor.name} scored ${matchScore} from ${reasons.join(", ") || "baseline eligibility"}.`;
+}
+
+function buildSubmissionId(job) {
+  const prefix = `${job.serviceType.slice(0, 3)}-${job.zipCode || "ZIP"}`.toUpperCase().replace(/[^A-Z0-9-]/g, "");
+  const stamp = Date.now().toString(36).toUpperCase();
+  return `${prefix}-${stamp}`;
 }
 
 export { DEFAULT_CONFIG };
