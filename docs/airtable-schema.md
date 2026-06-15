@@ -4,9 +4,40 @@ This document describes the Airtable operating model behind JobTap.OS without ex
 
 ## Backend Status
 
-The working Airtable base is named `JobTap`. It already contains the main operational tables required for the product. A `Routing Rules` table was added to hold deterministic scoring and routing rules that mirror the website routing engine.
+The working Airtable base is named `JobTap`. It contains the main operational tables required for the product plus a dedicated `Website Intake Queue` table for public-site/demo submissions.
+
+Airtable's role is intentionally tactical: it is the operator cockpit and early-stage admin backend. It should not be treated as the long-term production database for a scaled marketplace.
 
 ## Core Tables
+
+### Website Intake Queue
+Stages website and demo submissions before a secure server endpoint promotes them into `Jobs`, `Matches`, and `Tasks`.
+
+Recommended fields:
+
+- `Submission ID`
+- `Contact Name`
+- `Email`
+- `Phone`
+- `Service Type`
+- `Urgency`
+- `Estimated Value`
+- `Zip Code`
+- `Job Notes`
+- `Routing Score`
+- `Routing Lane`
+- `Qualified Lead`
+- `Top Contractor Match`
+- `Intake Status`
+- `Source`
+- `Payload`
+
+Recommended statuses:
+
+- `New`
+- `Reviewed`
+- `Converted to Job`
+- `Archived`
 
 ### Homeowners
 Stores customer and lead context.
@@ -231,12 +262,17 @@ Do not call Airtable directly from the public browser using a personal token.
 
 Recommended production pattern:
 
-1. Public form submits job intake to a server endpoint.
+1. Public form submits job intake to a secure server endpoint.
 2. Server validates and normalizes the request.
 3. Server applies the routing engine.
-4. Server writes the job to `Jobs`.
-5. Server ranks eligible contractors from `Contractors`.
-6. Server writes top candidates to `Matches`.
-7. Server creates follow-up `Tasks` when dispatch, review, or nurture work is needed.
+4. Server writes a staging record to `Website Intake Queue`.
+5. If qualified, server promotes the request into `Jobs`.
+6. Server ranks eligible contractors from `Contractors`.
+7. Server writes top candidates to `Matches`.
+8. Server creates follow-up `Tasks` when dispatch, review, or nurture work is needed.
 
 This keeps Airtable credentials server-side and preserves operational control.
+
+## Future Production Database Path
+
+When JobTap moves past prototype/admin-ops stage, the long-term data layer should become a real application database such as Postgres. Airtable should remain useful as an admin interface, reporting layer, or operator dashboard, but not as the public marketplace's primary system of record.
