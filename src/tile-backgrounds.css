@@ -1,0 +1,204 @@
+.card-media .service-symbol {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: .92;
+}
+
+.card-media.service-roofing {
+  background: linear-gradient(135deg, #1a1712, #302719 48%, #9c793d 130%);
+}
+.card-media.service-roofing .service-symbol {
+  background:
+    repeating-linear-gradient(135deg, transparent 0 18px, rgba(255,255,255,.08) 18px 21px),
+    repeating-linear-gradient(45deg, rgba(230,220,198,.36) 0 22px, rgba(98,75,42,.42) 22px 44px);
+  transform: skewY(-8deg) scale(1.18);
+}
+.card-media.service-roofing .service-symbol::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 10%;
+  top: 18%;
+  height: 44%;
+  border-top: 8px solid rgba(17,17,17,.42);
+  border-left: 8px solid rgba(17,17,17,.36);
+  transform: skewX(-16deg);
+}
+
+.card-media.service-electrical {
+  background: radial-gradient(circle at 72% 28%, rgba(185,147,76,.5), transparent 30%), linear-gradient(135deg, #101010, #343434 55%, #b9934c 140%);
+}
+.card-media.service-electrical .service-symbol::before {
+  content: "";
+  position: absolute;
+  left: 22%;
+  top: 18%;
+  width: 42%;
+  height: 58%;
+  border: 3px solid rgba(255,255,255,.36);
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(255,255,255,.2) 49% 51%, transparent 52%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.16) 0 14px, transparent 14px 34px);
+}
+.card-media.service-electrical .service-symbol::after {
+  content: "";
+  position: absolute;
+  right: 18%;
+  top: 18%;
+  width: 74px;
+  height: 120px;
+  background: #b9934c;
+  clip-path: polygon(48% 0, 18% 48%, 45% 48%, 30% 100%, 82% 36%, 55% 36%);
+  filter: drop-shadow(0 14px 28px rgba(0,0,0,.35));
+}
+
+.card-media.service-siding {
+  background: linear-gradient(135deg, #f4efe4, #b9934c 58%, #191919 125%);
+}
+.card-media.service-siding .service-symbol {
+  background: repeating-linear-gradient(0deg, rgba(255,255,255,.72) 0 18px, rgba(166,151,122,.52) 18px 22px, rgba(111,82,38,.44) 22px 24px);
+}
+.card-media.service-siding .service-symbol::after {
+  content: "";
+  position: absolute;
+  left: 22%;
+  top: 18%;
+  width: 52%;
+  height: 58%;
+  border-radius: 12px;
+  border: 4px solid rgba(17,17,17,.38);
+  background: linear-gradient(90deg, rgba(17,17,17,.16) 48%, rgba(17,17,17,.38) 49% 51%, rgba(17,17,17,.16) 52%);
+}
+
+.card-media.service-gutters {
+  background: linear-gradient(135deg, #f4f1e9, #c8c6bf 48%, #161616 120%);
+}
+.card-media.service-gutters .service-symbol::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 28%;
+  height: 34px;
+  border-radius: 0 0 18px 18px;
+  background: linear-gradient(180deg, #f7f7f5, #9a968c);
+  box-shadow: 0 16px 0 rgba(17,17,17,.18);
+}
+.card-media.service-gutters .service-symbol::after {
+  content: "";
+  position: absolute;
+  right: 20%;
+  top: 32%;
+  width: 24px;
+  height: 48%;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f7f7f5, #8d887b);
+}
+
+.card-media.service-hvac {
+  background: radial-gradient(circle at 34% 28%, rgba(255,255,255,.18), transparent 28%), linear-gradient(135deg, #393936, #111 60%, #b9934c 136%);
+}
+.card-media.service-hvac .service-symbol::before {
+  content: "";
+  position: absolute;
+  left: 24%;
+  top: 24%;
+  width: 46%;
+  height: 46%;
+  border-radius: 18px;
+  border: 4px solid rgba(255,255,255,.28);
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 8px, transparent 8px 18px);
+}
+.card-media.service-hvac .service-symbol::after {
+  content: "";
+  position: absolute;
+  left: 36%;
+  top: 33%;
+  width: 74px;
+  height: 74px;
+  border-radius: 999px;
+  border: 10px solid rgba(185,147,76,.72);
+  box-shadow: inset 0 0 0 14px rgba(17,17,17,.54);
+}
+
+.card-media.service-windows {
+  background: linear-gradient(135deg, #ffffff, #c9c9c5 52%, #111 125%);
+}
+.card-media.service-windows .service-symbol::before {
+  content: "";
+  position: absolute;
+  left: 22%;
+  top: 16%;
+  width: 54%;
+  height: 62%;
+  border: 8px solid rgba(255,255,255,.74);
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, transparent 47%, rgba(17,17,17,.44) 48% 52%, transparent 53%),
+    linear-gradient(0deg, transparent 47%, rgba(17,17,17,.34) 48% 52%, transparent 53%),
+    linear-gradient(135deg, rgba(198,222,232,.74), rgba(255,255,255,.2));
+  box-shadow: 0 22px 40px rgba(0,0,0,.28);
+}
+.card-media.service-windows .service-symbol::after {
+  content: "";
+  position: absolute;
+  left: 30%;
+  top: 28%;
+  width: 34%;
+  height: 3px;
+  background: rgba(255,255,255,.78);
+  transform: rotate(-38deg);
+}
+
+.card-media.service-plumbing {
+  background: linear-gradient(135deg, #eef0ef, #8f9a9d 46%, #111 118%);
+}
+.card-media.service-plumbing .service-symbol::before {
+  content: "";
+  position: absolute;
+  left: 18%;
+  top: 36%;
+  width: 58%;
+  height: 34px;
+  border: 8px solid rgba(255,255,255,.64);
+  border-right-color: transparent;
+  border-radius: 22px 0 0 22px;
+}
+.card-media.service-plumbing .service-symbol::after {
+  content: "";
+  position: absolute;
+  right: 20%;
+  top: 26%;
+  width: 32px;
+  height: 46%;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #f7f7f5, #9ba3a4);
+  box-shadow: -48px 34px 0 -9px rgba(185,147,76,.8);
+}
+
+.card-media.service-general-repair {
+  background: linear-gradient(135deg, #4a4a48, #111 54%, #b9934c 130%);
+}
+.card-media.service-general-repair .service-symbol::before,
+.card-media.service-general-repair .service-symbol::after {
+  content: "";
+  position: absolute;
+  left: 46%;
+  top: 18%;
+  width: 22px;
+  height: 64%;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f5f1e8 0 18%, #b9934c 18% 42%, #2b2b2b 42%);
+  transform-origin: 50% 60%;
+  box-shadow: 0 18px 28px rgba(0,0,0,.32);
+}
+.card-media.service-general-repair .service-symbol::before { transform: rotate(42deg); }
+.card-media.service-general-repair .service-symbol::after { transform: rotate(-42deg); }
+
+.card-media .card-badge,
+.card-media .card-save,
+.card-media .media-shell {
+  z-index: 2;
+}
