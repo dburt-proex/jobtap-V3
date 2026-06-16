@@ -29,12 +29,21 @@ const sampleJobs = [
     media: "black"
   },
   {
+    jobName: "Siding repair",
+    serviceType: "Siding",
+    urgency: "High",
+    estimatedValue: 3600,
+    zipCode: "55902",
+    badge: "Exterior lane",
+    media: "platinum"
+  },
+  {
     jobName: "Gutter install",
     serviceType: "Gutters",
     urgency: "Medium",
     estimatedValue: 2600,
     zipCode: "55902",
-    badge: "Exterior lane",
+    badge: "Drainage route",
     media: "platinum"
   },
   {
@@ -54,6 +63,15 @@ const sampleJobs = [
     zipCode: "55901",
     badge: "Qualified lead",
     media: "gold"
+  },
+  {
+    jobName: "Plumbing leak",
+    serviceType: "Plumbing",
+    urgency: "Emergency",
+    estimatedValue: 2100,
+    zipCode: "55904",
+    badge: "Emergency route",
+    media: "silver"
   },
   {
     jobName: "Drywall and trim repair",
@@ -88,8 +106,18 @@ const contractorLanes = [
     media: "silver"
   },
   {
-    name: "Exterior work lane",
-    detail: "Gutters, siding, windows, and weather-facing repair.",
+    name: "Siding crew lane",
+    detail: "Weather-facing siding repair, install, and exterior finish work.",
+    serviceType: "Siding",
+    urgency: "High",
+    estimatedValue: 3600,
+    zipCode: "55902",
+    badge: "Exterior",
+    media: "platinum"
+  },
+  {
+    name: "Exterior drainage lane",
+    detail: "Gutters, downspouts, fascia, and runoff control.",
     serviceType: "Gutters",
     urgency: "Medium",
     estimatedValue: 2600,
@@ -129,7 +157,8 @@ function renderPriorityJobs() {
       title: job.jobName,
       badge: job.badge,
       media: job.media,
-      mediaTitle: result.lane,
+      serviceType: job.serviceType,
+      mediaTitle: representativeLabel(job.serviceType),
       lineOne: `${job.serviceType} in ${job.zipCode}`,
       lineTwo: `${currency.format(job.estimatedValue)} est. value`,
       saveLabel: result.score,
@@ -147,7 +176,8 @@ function renderContractorLanes() {
       title: lane.name,
       badge: lane.badge,
       media: lane.media,
-      mediaTitle: topMatch,
+      serviceType: lane.serviceType,
+      mediaTitle: representativeLabel(lane.serviceType),
       lineOne: lane.detail,
       lineTwo: result.reason,
       saveLabel: "M",
@@ -156,12 +186,14 @@ function renderContractorLanes() {
   }).join("");
 }
 
-function cardTemplate({ title, badge, media, mediaTitle, lineOne, lineTwo, saveLabel, metrics }) {
+function cardTemplate({ title, badge, media, serviceType, mediaTitle, lineOne, lineTwo, saveLabel, metrics }) {
+  const serviceClass = `service-${slugify(serviceType)}`;
   return `
     <article class="listing-card">
-      <div class="card-media ${escapeHtml(media)}">
+      <div class="card-media ${escapeHtml(media)} ${escapeHtml(serviceClass)}">
         <span class="card-badge">${escapeHtml(badge)}</span>
         <span class="card-save">${escapeHtml(String(saveLabel))}</span>
+        <div class="service-symbol" aria-hidden="true"></div>
         <div class="media-shell">
           <b>${escapeHtml(mediaTitle)}</b>
           <div class="media-bars"><span></span><span></span><span></span></div>
@@ -175,6 +207,23 @@ function cardTemplate({ title, badge, media, mediaTitle, lineOne, lineTwo, saveL
       </div>
     </article>
   `;
+}
+
+function representativeLabel(serviceType) {
+  return {
+    Roofing: "Shingle roof",
+    Electrical: "Panel work",
+    Siding: "Siding crew",
+    Gutters: "Gutter run",
+    HVAC: "HVAC unit",
+    Windows: "Window install",
+    Plumbing: "Pipe repair",
+    "General Repair": "Tool crew"
+  }[serviceType] || "Service route";
+}
+
+function slugify(value) {
+  return String(value || "service").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 function readForm(selector) {
