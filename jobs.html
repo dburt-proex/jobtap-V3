@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jobs | JobTap.OS</title>
+  <meta name="description" content="Priority job routing examples scored by urgency, value, service fit, and dispatch lane." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="src/tile-backgrounds.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html" data-page="index.html" aria-label="JobTap home"><span class="brand-mark">JT</span><span class="brand-word">JobTap</span></a>
+      <div class="nav-links" aria-label="JobTap sections"><a href="jobs.html" data-page="jobs.html">Jobs</a><a href="contractors.html" data-page="contractors.html">Contractors</a><a href="backend.html" data-page="backend.html">Backend</a></div>
+      <div class="nav-actions"><a class="nav-cta" href="intake.html" data-page="intake.html">Run intake</a><button class="round-action menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu"><span></span><span></span></button></div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu" hidden><a href="index.html" data-page="index.html">Home</a><a href="jobs.html" data-page="jobs.html">Jobs</a><a href="contractors.html" data-page="contractors.html">Contractors</a><a href="backend.html" data-page="backend.html">Backend</a><a href="intake.html" data-page="intake.html">Run intake</a></div>
+  </header>
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow">Priority job routing</p>
+      <h1>Every inbound job gets a lane.</h1>
+      <p>JobTap scores urgency, estimated value, service type, and fit so operators can see which requests need immediate dispatch, priority review, or standard queue handling.</p>
+      <div class="hero-actions"><a class="btn" href="intake.html">Route a job</a><a class="hero-link dark" href="contractors.html">View contractor lanes</a></div>
+    </section>
+    <section class="market-row" aria-labelledby="priority-title">
+      <div class="row-head">
+        <div><h2 id="priority-title">Priority jobs in Rochester</h2><p>Representative requests scored by urgency, value, specialty fit, and dispatch lane.</p></div>
+        <div class="row-controls"><button type="button" data-scroll-target="priority-jobs" data-scroll-direction="prev" aria-label="Scroll priority jobs left">‹</button><button type="button" data-scroll-target="priority-jobs" data-scroll-direction="next" aria-label="Scroll priority jobs right">›</button></div>
+      </div>
+      <div class="card-scroller" id="priority-jobs" tabindex="0" aria-label="Priority job cards"></div>
+    </section>
+    <section class="section"><div class="proof-strip"><article><b>Immediate Dispatch</b><span>Emergency or high-value requests that should move first.</span></article><article><b>Priority Review</b><span>Strong leads that need operator confirmation or assignment.</span></article><article><b>Standard Queue</b><span>Lower urgency work held cleanly without losing context.</span></article><article><b>Route Package</b><span>Each job produces a payload for admin review and follow-up.</span></article></div></section>
+  </main>
+  <footer class="footer"><span>JobTap.OS</span><span>Priority scoring and dispatch control.</span></footer>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
