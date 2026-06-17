@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contractors | JobTap.OS</title>
+  <meta name="description" content="Contractor lanes ranked by service fit, coverage, availability, qualification, and close potential." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="src/tile-backgrounds.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html" data-page="index.html" aria-label="JobTap home"><span class="brand-mark">JT</span><span class="brand-word">JobTap</span></a>
+      <div class="nav-links" aria-label="JobTap sections"><a href="jobs.html" data-page="jobs.html">Jobs</a><a href="contractors.html" data-page="contractors.html">Contractors</a><a href="backend.html" data-page="backend.html">Backend</a></div>
+      <div class="nav-actions"><a class="nav-cta" href="intake.html" data-page="intake.html">Run intake</a><button class="round-action menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu"><span></span><span></span></button></div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu" hidden><a href="index.html" data-page="index.html">Home</a><a href="jobs.html" data-page="jobs.html">Jobs</a><a href="contractors.html" data-page="contractors.html">Contractors</a><a href="backend.html" data-page="backend.html">Backend</a><a href="intake.html" data-page="intake.html">Run intake</a></div>
+  </header>
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow">Contractor matching</p>
+      <h1>Route work to the right crew, not just the first contact.</h1>
+      <p>JobTap organizes contractors into operational lanes by specialty, coverage, urgency fit, and dispatch readiness.</p>
+      <div class="hero-actions"><a class="btn" href="intake.html">Test matching</a><a class="hero-link dark" href="jobs.html">View jobs</a></div>
+    </section>
+    <section class="market-row" aria-labelledby="lanes-title">
+      <div class="row-head">
+        <div><h2 id="lanes-title">Contractor lanes ready to route</h2><p>Specialized dispatch paths ranked by coverage, availability, qualification, and close potential.</p></div>
+        <div class="row-controls"><button type="button" data-scroll-target="contractor-lanes" data-scroll-direction="prev" aria-label="Scroll contractor lanes left">‹</button><button type="button" data-scroll-target="contractor-lanes" data-scroll-direction="next" aria-label="Scroll contractor lanes right">›</button></div>
+      </div>
+      <div class="card-scroller" id="contractor-lanes" tabindex="0" aria-label="Contractor lane cards"></div>
+    </section>
+    <section class="section"><div class="business-grid"><article class="link-card"><b>Specialty Fit</b><span>Roofing, siding, windows, HVAC, electrical, plumbing, gutters, and general repair.</span></article><article class="link-card"><b>Coverage</b><span>Match requests to the right city, zip, and service radius.</span></article><article class="link-card"><b>Availability</b><span>Keep urgent work separate from standard queue work.</span></article><article class="link-card"><b>Performance</b><span>Future ranking can use close rate, speed, reviews, and revenue outcome.</span></article></div></section>
+  </main>
+  <footer class="footer"><span>JobTap.OS</span><span>Contractor lane matching and dispatch readiness.</span></footer>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
