@@ -2,13 +2,18 @@
 
 AI-assisted job scoring, contractor matching, and service pipeline control for local contractor networks.
 
-JobTap.OS is a static showcase plus working routing demo. It takes an incoming job request, scores urgency and value, identifies the right contractor lane, ranks eligible contractors, and produces an Airtable-ready handoff package.
+JobTap.OS is now structured as a multi-page business website instead of a single mixed landing page/demo. The site separates the product narrative, priority jobs, contractor lanes, live intake, and backend model into clear pages.
 
 ## Current Status
 
-This repo now contains:
+This repo contains:
 
-- premium marketplace-style landing page
+- multi-page business website
+- premium home page with quick routing entry
+- dedicated priority jobs page
+- dedicated contractor lanes page
+- dedicated live intake/routing page
+- dedicated backend/Airtable operations page
 - working intake/routing flow
 - contractor match ranking logic
 - Airtable-ready payload generation
@@ -24,25 +29,27 @@ Expected GitHub Pages URL:
 https://dburt-proex.github.io/jobtap-V3/
 ```
 
+Core pages:
+
+```text
+/
+/jobs.html
+/contractors.html
+/intake.html
+/backend.html
+```
+
 A GitHub Actions Pages workflow is included at:
 
 ```text
 .github/workflows/pages.yml
 ```
 
-For GitHub Pages, the repo should use one of these settings:
+Recommended GitHub Pages setting:
 
 ```text
 Settings -> Pages -> Build and deployment -> Source: GitHub Actions
 ```
-
-or, for branch deploys:
-
-```text
-Settings -> Pages -> Deploy from a branch -> main / root
-```
-
-If the live URL returns `403`, the usual issue is that GitHub Pages is not enabled for the repository or the source is not set. The static files and deployment workflow are now present in the repo.
 
 ## Repo Tree
 
@@ -57,13 +64,40 @@ jobtap-V3/
 │   └── airtable-schema.md
 ├── src/
 │   ├── app.js
-│   └── routing.js
+│   ├── routing.js
+│   └── tile-backgrounds.css
 ├── .nojekyll
 ├── 404.html
+├── backend.html
+├── contractors.html
 ├── index.html
+├── intake.html
+├── jobs.html
 ├── styles.css
 └── README.md
 ```
+
+## Site Structure
+
+### `index.html`
+
+Business homepage and navigation hub. It explains the JobTap.OS offer, shows the hero motion background, provides a quick route form, and links users into the deeper pages.
+
+### `jobs.html`
+
+Priority job routing page. It shows representative jobs scored by urgency, value, trade fit, and dispatch lane.
+
+### `contractors.html`
+
+Contractor lanes page. It explains how JobTap routes work by specialty, coverage, availability, qualification, and future performance data.
+
+### `intake.html`
+
+Live operational demo. A user can submit a job request, see the score, view the recommended routing lane, inspect top contractor matches, and queue a browser-local handoff package.
+
+### `backend.html`
+
+Airtable/admin model page. It explains how Airtable is used as the early operator cockpit and why production writes should eventually move behind a secure API and production database.
 
 ## What It Does
 
@@ -75,22 +109,6 @@ JobTap.OS turns scattered service requests into routed work:
 4. Assigns a routing lane: `Immediate Dispatch`, `Priority Review`, or `Standard Queue`.
 5. Ranks contractors by specialty, coverage, availability, qualification, and performance.
 6. Generates Airtable-ready payloads for `Website Intake Queue`, `Jobs`, and `Matches`.
-
-## Website UX
-
-The homepage is intentionally structured like a premium marketplace rather than a generic SaaS page:
-
-- sticky navigation
-- centered category tabs
-- rounded routing/search capsule
-- horizontal priority job cards
-- horizontal contractor lane cards
-- operational proof strip
-- live intake/routing form
-- result panel with score, lane, contractor matches, and next actions
-- backend model section
-
-The public CTA is no longer a `mailto:` link. The conversion path is now the on-page intake flow.
 
 ## Routing Engine
 
@@ -175,7 +193,7 @@ window.JobTapLastPayload
 window.JobTapLastSubmission
 ```
 
-This is intentional for a static GitHub Pages deployment. It proves the workflow without exposing private Airtable credentials.
+The home page quick route form stores the request temporarily in `sessionStorage` and opens `intake.html`, where the intake form and result panel load the pending route.
 
 ## Airtable Backend
 
@@ -271,10 +289,9 @@ Recommended starting deliverable:
 
 ## Next Build Steps
 
-1. Enable/confirm GitHub Pages source if the public URL still returns `403`.
-2. Add a secure backend endpoint for Airtable writes.
-3. Replace sample contractors with live Airtable contractor records.
-4. Generate `Jobs`, `Matches`, and `Tasks` from one submitted request.
-5. Add admin override and manual dispatch review.
-6. Track conversion outcome and revenue generated.
-7. Use closed-job feedback to improve contractor ranking.
+1. Add a secure backend endpoint for Airtable writes.
+2. Replace sample contractors with live Airtable contractor records.
+3. Generate `Jobs`, `Matches`, and `Tasks` from one submitted request.
+4. Add admin override and manual dispatch review.
+5. Track conversion outcome and revenue generated.
+6. Use closed-job feedback to improve contractor ranking.
