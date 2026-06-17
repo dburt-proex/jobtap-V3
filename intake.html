@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Run Intake | JobTap.OS</title>
+  <meta name="description" content="Submit a job request and see JobTap score, route, and match the best contractor lane." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="src/tile-backgrounds.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html" data-page="index.html" aria-label="JobTap home"><span class="brand-mark">JT</span><span class="brand-word">JobTap</span></a>
+      <div class="nav-links" aria-label="JobTap sections"><a href="jobs.html" data-page="jobs.html">Jobs</a><a href="contractors.html" data-page="contractors.html">Contractors</a><a href="backend.html" data-page="backend.html">Backend</a></div>
+      <div class="nav-actions"><a class="nav-cta" href="intake.html" data-page="intake.html">Run intake</a><button class="round-action menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu"><span></span><span></span></button></div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu" hidden><a href="index.html" data-page="index.html">Home</a><a href="jobs.html" data-page="jobs.html">Jobs</a><a href="contractors.html" data-page="contractors.html">Contractors</a><a href="backend.html" data-page="backend.html">Backend</a><a href="intake.html" data-page="intake.html">Run intake</a></div>
+  </header>
+  <main>
+    <section class="page-hero compact">
+      <p class="eyebrow">Live intake flow</p>
+      <h1>Route a real request through the system.</h1>
+      <p>This page is the operational product demo: job details in, score and recommended contractor lane out.</p>
+    </section>
+    <section class="section intake-section" aria-labelledby="intake-title">
+      <div class="section-head"><h2 id="intake-title">Job routing simulator</h2><p>Submit the form to queue a browser-local handoff package. Production submission belongs behind a secure API endpoint.</p></div>
+      <div class="simulator">
+        <form class="panel intake-form" id="routing-form">
+          <div class="field-grid two-col">
+            <label for="contactName">Name<input id="contactName" name="contactName" type="text" value="Demo Homeowner" autocomplete="name" /></label>
+            <label for="email">Email<input id="email" name="email" type="email" value="demo@example.com" autocomplete="email" /></label>
+            <label for="phone">Phone<input id="phone" name="phone" type="tel" value="507-555-0142" autocomplete="tel" /></label>
+            <label for="zipCode">Zip Code<input id="zipCode" name="zipCode" type="text" value="55904" inputmode="numeric" /></label>
+          </div>
+          <div class="field-grid three-col">
+            <label for="serviceType">Service Type<select id="serviceType" name="serviceType"><option>Roofing</option><option>Electrical</option><option>HVAC</option><option>Plumbing</option><option>General Repair</option><option>Gutters</option><option>Siding</option><option>Windows</option></select></label>
+            <label for="urgency">Urgency<select id="urgency" name="urgency"><option>Emergency</option><option>High</option><option>Medium</option><option>Low</option></select></label>
+            <label for="estimatedValue">Estimated Value<input id="estimatedValue" name="estimatedValue" type="number" min="100" step="100" value="4200" /></label>
+          </div>
+          <label for="description">Job Notes<textarea id="description" name="description">Active leak near rear transition. Needs fast inspection and qualified exterior crew.</textarea></label>
+          <div class="form-actions"><button class="btn form-btn" type="submit">Route this job</button><button class="btn secondary" id="copy-payload" type="button">Copy package</button></div>
+          <p class="form-note">No Airtable token is exposed in the browser. The current demo stores queued packages in localStorage.</p>
+        </form>
+        <aside class="panel result-panel" aria-live="polite">
+          <div class="score-card"><span>Priority Score</span><strong id="result-score">94</strong><small id="result-lane">Immediate Dispatch</small></div>
+          <div class="result-row"><span>Contractor Type</span><strong id="result-contractor">Licensed Roofer</strong></div>
+          <div class="result-row"><span>Reason</span><strong id="result-reason">Emergency roofing request with high value and active damage risk.</strong></div>
+          <div><h3>Top Contractor Matches</h3><ol class="match-list" id="match-list"></ol></div>
+          <div><h3>Next Actions</h3><ul class="action-list" id="action-list"></ul></div>
+          <div class="queue-card"><span id="queue-status">Ready to submit.</span><small id="queue-count">0 packages queued in this browser session.</small></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+  <footer class="footer"><span>JobTap.OS</span><span>Live intake, scoring, and route packaging.</span></footer>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
